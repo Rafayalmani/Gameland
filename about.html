@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preload" href="./assets/fonts/zentry-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/general.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="shortcut icon" href="./assets/img/favicon.ico">
+	<title>About</title>
+	<script type="module" crossorigin="" src="./js/index.min.js?v=1757083809505"></script>
+	<link rel="stylesheet" crossorigin="" href="./css/index.min.css?v=1757083809505">
+	<style>
+		/* ── About page extra styles ── */
+		.about-hero {
+			min-height: 100svh;
+			display: flex;
+			align-items: center;
+			position: relative;
+			overflow: hidden;
+			padding-top: 120px;
+			padding-bottom: 80px;
+		}
+		.about-hero__bg {
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+		}
+		.about-hero__bg-img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+			opacity: 0.18;
+			filter: grayscale(40%);
+		}
+		.about-hero__overlay {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(
+				to right,
+				rgba(0,0,0,0.95) 40%,
+				rgba(0,0,0,0.4) 100%
+			);
+		}
+		.about-hero__container {
+			position: relative;
+			z-index: 2;
+			width: 100%;
+		}
+		.about-hero__eyebrow {
+			font-family: var(--font-general);
+			font-size: 0.75rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: #c7fb50;
+			margin-bottom: 1.5rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s;
+		}
+		.about-hero__eyebrow.is-visible { opacity: 1; transform: translateY(0); }
+
+		.about-hero__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(3.5rem, 10vw, 9rem);
+			line-height: 0.9;
+			letter-spacing: -0.01em;
+			color: #fff;
+			text-transform: uppercase;
+			opacity: 0;
+			transform: translateY(40px);
+			transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s,
+						transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s;
+		}
+		.about-hero__title.is-visible { opacity: 1; transform: translateY(0); }
+		.about-hero__title b { color: #c7fb50; font-weight: inherit; }
+
+		.about-hero__body {
+			margin-top: 2.5rem;
+			max-width: 520px;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s;
+		}
+		.about-hero__body.is-visible { opacity: 1; transform: translateY(0); }
+		.about-hero__body p {
+			font-family: var(--font-robert-regular);
+			font-size: clamp(0.875rem, 1.2vw, 1.05rem);
+			line-height: 1.75;
+			color: rgba(255,255,255,0.5);
+			margin-bottom: 1rem;
+		}
+		.about-hero__body p:last-child { margin-bottom: 0; }
+
+		/* Stats strip */
+		.about-stats {
+			display: flex;
+			gap: 0;
+			flex-wrap: wrap;
+			margin-top: 4rem;
+			border-top: 1px solid rgba(255,255,255,0.08);
+			padding-top: 2.5rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s;
+		}
+		.about-stats.is-visible { opacity: 1; transform: translateY(0); }
+		.about-stat {
+			flex: 1;
+			min-width: 130px;
+			padding-right: 2.5rem;
+			margin-right: 2.5rem;
+			border-right: 1px solid rgba(255,255,255,0.07);
+		}
+		.about-stat:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+		.about-stat__num {
+			font-family: var(--font-zentry);
+			font-size: clamp(2rem, 4vw, 3.5rem);
+			color: #fff;
+			line-height: 1;
+		}
+		.about-stat__num span { color: #c7fb50; }
+		.about-stat__label {
+			font-family: var(--font-general);
+			font-size: 0.65rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.35);
+			margin-top: 0.5rem;
+		}
+
+		/* Pillars grid */
+		.about-pillars {
+			padding: 100px 0;
+			border-top: 1px solid rgba(255,255,255,0.06);
+		}
+		.about-pillars__label {
+			font-family: var(--font-general);
+			font-size: 0.7rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.35);
+			margin-bottom: 3rem;
+		}
+		.about-pillars__grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1px;
+			background: rgba(255,255,255,0.06);
+		}
+		@media (min-width: 768px) {
+			.about-pillars__grid { grid-template-columns: repeat(4, 1fr); }
+		}
+		.about-pillar {
+			background: #000;
+			padding: 2.5rem 2rem;
+			transition: background 0.3s ease;
+		}
+		.about-pillar:hover { background: #0d0d0d; }
+		.about-pillar__icon {
+			width: 36px;
+			height: 36px;
+			margin-bottom: 1.5rem;
+			opacity: 0.6;
+		}
+		.about-pillar__title {
+			font-family: var(--font-zentry);
+			font-size: 1.4rem;
+			color: #fff;
+			text-transform: uppercase;
+			margin-bottom: 0.75rem;
+		}
+		.about-pillar__text {
+			font-family: var(--font-robert-regular);
+			font-size: 0.8rem;
+			line-height: 1.7;
+			color: rgba(255,255,255,0.38);
+		}
+
+		/* Team section */
+		.about-team {
+			padding: 80px 0 100px;
+			border-top: 1px solid rgba(255,255,255,0.06);
+		}
+		.about-team__header {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 20px;
+			margin-bottom: 3rem;
+		}
+		.about-team__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(2rem, 5vw, 4.5rem);
+			text-transform: uppercase;
+			line-height: 1;
+			color: #fff;
+		}
+		.about-team__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.8rem;
+			color: rgba(255,255,255,0.35);
+			max-width: 320px;
+			line-height: 1.7;
+		}
+		.about-team__grid {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			gap: 1px;
+			background: rgba(255,255,255,0.06);
+		}
+		@media (min-width: 768px) {
+			.about-team__grid { grid-template-columns: repeat(3, 1fr); }
+		}
+		.about-member {
+			background: #000;
+			padding: 2.5rem 2rem;
+			transition: background 0.3s ease;
+		}
+		.about-member:hover { background: #0d0d0d; }
+		.about-member__avatar {
+			width: 56px; height: 56px;
+			border-radius: 50%;
+			background: rgba(199,251,80,0.12);
+			border: 1px solid rgba(199,251,80,0.2);
+			display: flex; align-items: center; justify-content: center;
+			font-family: var(--font-zentry);
+			font-size: 1.1rem;
+			color: #c7fb50;
+			margin-bottom: 1.2rem;
+		}
+		.about-member__name {
+			font-family: var(--font-robert-medium);
+			font-size: 0.95rem;
+			color: #fff;
+			margin-bottom: 0.3rem;
+		}
+		.about-member__role {
+			font-family: var(--font-general);
+			font-size: 0.65rem;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.3);
+		}
+
+		/* CTA banner */
+		.about-cta {
+			border-top: 1px solid rgba(255,255,255,0.06);
+			padding: 100px 0;
+			text-align: center;
+			background-color: #000;
+		}
+		.about-cta__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(2.5rem, 7vw, 7rem);
+			text-transform: uppercase;
+			line-height: 0.95;
+			color: #fff;
+			margin-bottom: 2rem;
+		}
+		.about-cta__title b { color: #c7fb50; font-weight: inherit; }
+		.about-cta__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.9rem;
+			color: rgba(255,255,255,0.4);
+			margin-bottom: 2.5rem;
+		}
+
+		.footer__credit {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.footer__credit-name {
+  color: #c7fb50;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(199, 251, 80, 0.3);
+  padding-bottom: 1px;
+  margin-left: 6px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.footer__credit-name:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+	</style>
+</head>
+
+<body>
+<div class="wrapper">
+
+	<header data-fls-header="" class="header" data-fls-header-scroll="" data-fls-header-scroll-show="">
+		<div class="header__wrapper">
+			<div class="header__container">
+				<div class="header__menu menu">
+					<div class="menu__left-side">
+						<a href="index.html">
+								<div class="menu__logo">GAMELAND</div>
+							</a>
+						<a class="menu__btn btn --icon-cursor-r" href="product.html">
+							<span class="btn__label">
+								<span class="btn__main">PRODUCT</span>
+								<span class="btn__alt">SEE now!</span>
+							</span>
+						</a>
+					</div>
+					<div class="menu__body-wrapper">
+						<nav class="menu__body">
+							<ul class="menu__list">
+								
+								<li class="menu__item"><a href="about.html" class="menu__link --active">About</a></li>
+								<li class="menu__item"><a href="contacts.html" class="menu__link">Contacts</a></li>
+							</ul>
+						</nav>
+						<div class="menu__action">
+							<button type="button" class="menu__audio-toggle --icon-music" aria-label="Toggle audio"
+								aria-pressed="false" data-fls-dynamic=".menu__body, 385, 1">
+								<div class="menu__audio-icon">
+									<span></span><span></span><span></span><span></span>
+								</div>
+							</button>
+							<button type="button" data-fls-menu="" class="menu__icon icon-menu" aria-label="Toggle menu">
+								<span></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<!-- ── HERO ────────────────────────────────── -->
+		<section class="about-hero wrapper__container" aria-label="About hero">
+			<div class="about-hero__bg">
+				<img class="about-hero__bg-img"
+					src="./assets/img/about.webp"
+					alt="" aria-hidden="true" loading="eager">
+				<div class="about-hero__overlay"></div>
+			</div>
+
+			<div class="about-hero__container wrapper__container">
+				<p class="about-hero__eyebrow" id="ab-eyebrow">Who We Are</p>
+				<h1 class="about-hero__title" id="ab-title">
+					Redefine<br><b>Zentry</b>
+				</h1>
+				<div class="about-hero__body" id="ab-body">
+					<p>We are the architects of the Metagame Layer a unified play economy that sits above every game, every platform, and every player.</p>
+					<p>Built by gamers. Powered by Web3. Driven by the belief that your time, skill, and loyalty deserve real rewards.</p>
+				</div>
+
+				<div class="about-stats" id="ab-stats">
+					<div class="about-stat">
+						<div class="about-stat__num">2.4<span>M</span></div>
+						<div class="about-stat__label">Active Players</div>
+					</div>
+					<div class="about-stat">
+						<div class="about-stat__num">140<span>+</span></div>
+						<div class="about-stat__label">Partner Games</div>
+					</div>
+					<div class="about-stat">
+						<div class="about-stat__num">60<span>+</span></div>
+						<div class="about-stat__label">Countries</div>
+					</div>
+					<div class="about-stat">
+						<div class="about-stat__num">$4.2<span>M</span></div>
+						<div class="about-stat__label">Assets Managed</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ── PILLARS ─────────────────────────────── -->
+		<section class="about-pillars">
+			<div class="wrapper__container">
+				<p class="about-pillars__label">What We Build</p>
+				<div class="about-pillars__grid">
+
+					<div class="about-pillar">
+						<svg class="about-pillar__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="18" cy="18" r="17" stroke="rgba(199,251,80,0.5)" stroke-width="1"/>
+							<path d="M10 26C10 20 14 14 18 11C22 14 26 20 26 26H10Z" stroke="white" stroke-width="1.2" fill="none"/>
+							<circle cx="18" cy="9" r="2" stroke="white" stroke-width="1.2" fill="none"/>
+						</svg>
+						<h3 class="about-pillar__title">Metagame</h3>
+						<p class="about-pillar__text">A universal layer that turns every play session into progress across every game you own.</p>
+					</div>
+
+					<div class="about-pillar">
+						<svg class="about-pillar__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="18" cy="18" r="17" stroke="rgba(199,251,80,0.5)" stroke-width="1"/>
+							<rect x="10" y="12" width="16" height="14" rx="1" stroke="white" stroke-width="1.2" fill="none"/>
+							<line x1="18" y1="12" x2="18" y2="8" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+							<circle cx="18" cy="7" r="1.5" stroke="white" stroke-width="1.2" fill="none"/>
+						</svg>
+						<h3 class="about-pillar__title">Vault</h3>
+						<p class="about-pillar__text">Sovereign asset storage for your NFTs, skins, and earned rewards  always on-chain, always yours.</p>
+					</div>
+
+					<div class="about-pillar">
+						<svg class="about-pillar__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="18" cy="18" r="17" stroke="rgba(199,251,80,0.5)" stroke-width="1"/>
+							<circle cx="18" cy="18" r="7" stroke="white" stroke-width="1.2" fill="none"/>
+							<line x1="18" y1="8"  x2="18" y2="5"  stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+							<line x1="18" y1="28" x2="18" y2="31" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+							<line x1="8"  y1="18" x2="5"  y2="18" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+							<line x1="28" y1="18" x2="31" y2="18" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+						</svg>
+						<h3 class="about-pillar__title">Nexus</h3>
+						<p class="about-pillar__text">The social hub where Web3 communities compete, collaborate, and build reputations together.</p>
+					</div>
+
+					<div class="about-pillar">
+						<svg class="about-pillar__icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="18" cy="18" r="17" stroke="rgba(199,251,80,0.5)" stroke-width="1"/>
+							<path d="M10 20 L14 14 L18 17 L22 11 L26 20" stroke="white" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+							<line x1="10" y1="25" x2="26" y2="25" stroke="white" stroke-width="1.2" stroke-linecap="round"/>
+						</svg>
+						<h3 class="about-pillar__title">Economy</h3>
+						<p class="about-pillar__text">A living play economy where skill, time, and dedication translate into real-world value.</p>
+					</div>
+
+				</div>
+			</div>
+		</section>
+
+		<!-- ── TEAM ────────────────────────────────── -->
+		<section class="about-team">
+			<div class="wrapper__container">
+				<div class="about-team__header">
+					<h2 class="about-team__title">The<br>Builders</h2>
+					<p class="about-team__sub">A crew of developers, designers, and dreamers who believe the metagame is the next frontier.</p>
+				</div>
+				<div class="about-team__grid">
+					<div class="about-member">
+						<div class="about-member__avatar">RA</div>
+						<div class="about-member__name">Rafay Almani</div>
+						<div class="about-member__role">Founder &amp; Lead Developer</div>
+					</div>
+					<div class="about-member">
+						<div class="about-member__avatar">AK</div>
+						<div class="about-member__name">Kiran Ramzan</div>
+						<div class="about-member__role">Head of Design</div>
+					</div>
+					<div class="about-member">
+						<div class="about-member__avatar">ZM</div>
+						<div class="about-member__name">Qasim Almani</div>
+						<div class="about-member__role">Blockchain Engineer</div>
+					</div>
+					<div class="about-member">
+						<div class="about-member__avatar">SJ</div>
+						<div class="about-member__name">Sara Javed</div>
+						<div class="about-member__role">Product Manager</div>
+					</div>
+					<div class="about-member">
+						<div class="about-member__avatar">NB</div>
+						<div class="about-member__name">Noor Aftab</div>
+						<div class="about-member__role">Community Lead</div>
+					</div>
+					<div class="about-member">
+						<div class="about-member__avatar">+</div>
+						<div class="about-member__name">You?</div>
+						<div class="about-member__role">We're Hiring</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- ── CTA ─────────────────────────────────── -->
+		<section class="about-cta" id="contact" aria-labelledby="ab-cta-title">
+			<div class="wrapper__container">
+				<h2 class="about-cta__title anim-title" id="ab-cta-title">
+					JOIN THE<br><b>NEW ERA</b>
+				</h2>
+				<p class="about-cta__sub">Ready to enter the Metagame Layer?</p>
+				<a class="cta__button btn" href="contacts.html">
+					<span class="btn__label">
+						<span class="btn__main">contact us</span>
+						<span class="btn__alt">let's go!</span>
+					</span>
+				</a>
+			</div>
+		</section>
+
+	</main>
+
+	<audio id="bg-audio" src="./files/music.mp3" preload="auto" loop></audio>
+
+	<footer data-fls-footer="" class="footer">
+  <div class="footer__container">
+
+    <div class="footer__copy">© 2026 LANDGAME. All rights reserved.</div>
+
+    <ul class="footer__sociall">
+      <li class="footer__social-item">
+        <a href="https://dribbble.com/rafayalmani" class="footer__social-link --icon-dribbble">
+          <span class="visually-hidden">Dribbble</span>
+        </a>
+      </li>
+      <li class="footer__social-item">
+        <a href="https://github.com/Rafayalmani" class="footer__social-link --icon-github">
+          <span class="visually-hidden">GitHub</span>
+        </a>
+      </li>
+      <li class="footer__social-item">
+        <a href="https://discord.gg/Rafayalmani" class="footer__social-link --icon-discord">
+          <span class="visually-hidden">Discord</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="footer__credit">
+      Created &amp; Developed by
+      <a href="https://github.com/Rafayalmani" class="footer__credit-name">Rafay Almani</a>
+    </div>
+
+    
+  </div>
+</footer>
+
+</div>
+
+<script>
+	// Reveal hero elements after page load
+	window.addEventListener('load', function () {
+		setTimeout(function () {
+			['ab-eyebrow', 'ab-title', 'ab-body', 'ab-stats'].forEach(function (id) {
+				var el = document.getElementById(id);
+				if (el) el.classList.add('is-visible');
+			});
+		}, 200);
+	});
+</script>
+</body>
+</html>

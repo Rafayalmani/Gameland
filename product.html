@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preload" href="./assets/fonts/zentry-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/general.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="shortcut icon" href="./assets/img/favicon.ico">
+	<title>Product</title>
+	<script type="module" crossorigin="" src="./js/index.min.js?v=1757083809505"></script>
+	<link rel="stylesheet" crossorigin="" href="./css/index.min.css?v=1757083809505">
+	<style>
+
+		/* ════════════════════════════════════════
+		   PRODUCT PAGE — Coming Soon
+		   ════════════════════════════════════════ */
+
+		.product-page {
+			min-height: 100svh;
+			background: #000;
+			overflow: hidden;
+		}
+
+		/* ── Fullscreen hero ── */
+		.product-hero {
+			position: relative;
+			min-height: 100svh;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			padding: 120px 24px 80px;
+			overflow: hidden;
+		}
+
+		/* Background layers */
+		.product-hero__bg {
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			pointer-events: none;
+		}
+
+		/* Swordman / contact images reused as BG art */
+		.product-hero__bg-art {
+			position: absolute;
+			pointer-events: none;
+			user-select: none;
+		}
+		.product-hero__bg-art--left {
+			left: -60px;
+			bottom: -20px;
+			width: clamp(200px, 28vw, 420px);
+			opacity: 0.13;
+			transform: scaleX(-1);
+		}
+		.product-hero__bg-art--right {
+			right: -40px;
+			bottom: -20px;
+			width: clamp(200px, 28vw, 420px);
+			opacity: 0.13;
+		}
+
+		/* Radial glow */
+		.product-hero__glow {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: min(700px, 90vw);
+			height: min(700px, 90vw);
+			background: radial-gradient(circle, rgba(199,251,80,0.06) 0%, transparent 65%);
+			pointer-events: none;
+		}
+
+		/* Animated scan line */
+		.product-hero__scan {
+			position: absolute;
+			left: 0; right: 0;
+			height: 1px;
+			background: linear-gradient(to right, transparent, rgba(199,251,80,0.3), transparent);
+			animation: scanMove 6s ease-in-out infinite;
+			pointer-events: none;
+		}
+		@keyframes scanMove {
+			0%   { top: 20%; opacity: 0; }
+			10%  { opacity: 1; }
+			90%  { opacity: 1; }
+			100% { top: 85%; opacity: 0; }
+		}
+
+		/* Grid overlay */
+		.product-hero__grid {
+			position: absolute;
+			inset: 0;
+			background-image:
+				linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+			background-size: 60px 60px;
+		}
+
+		/* ── Content ── */
+		.product-hero__inner {
+			position: relative;
+			z-index: 2;
+			max-width: 860px;
+			width: 100%;
+		}
+
+		/* Status badge */
+		.product-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			border: 1px solid rgba(199,251,80,0.25);
+			padding: 8px 18px;
+			margin-bottom: 2.5rem;
+			opacity: 0;
+			transform: translateY(16px);
+			transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s,
+						transform 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s;
+		}
+		.product-badge.is-visible { opacity: 1; transform: translateY(0); }
+		.product-badge__dot {
+			width: 6px; height: 6px;
+			border-radius: 50%;
+			background: #c7fb50;
+			box-shadow: 0 0 6px #c7fb50;
+			animation: pulseDot 2s ease-in-out infinite;
+		}
+		@keyframes pulseDot {
+			0%,100% { opacity: 1; transform: scale(1); }
+			50%      { opacity: 0.4; transform: scale(0.7); }
+		}
+		.product-badge__text {
+			font-family: var(--font-general);
+			font-size: 0.65rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: #c7fb50;
+		}
+
+		/* Headline */
+		.product-headline {
+			font-family: var(--font-zentry);
+			font-size: clamp(3.5rem, 11vw, 10rem);
+			line-height: 0.88;
+			text-transform: uppercase;
+			color: #fff;
+			letter-spacing: -0.01em;
+			margin-bottom: 1.5rem;
+			opacity: 0;
+			transform: translateY(50px);
+			transition: opacity 1s cubic-bezier(0.16,1,0.3,1) 0.2s,
+						transform 1s cubic-bezier(0.16,1,0.3,1) 0.2s;
+		}
+		.product-headline.is-visible { opacity: 1; transform: translateY(0); }
+		.product-headline span { color: #c7fb50; }
+
+		/* Sub */
+		.product-sub {
+			font-family: var(--font-robert-regular);
+			font-size: clamp(0.875rem, 1.3vw, 1rem);
+			line-height: 1.75;
+			color: rgba(255,255,255,0.4);
+			max-width: 520px;
+			margin: 0 auto 3rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s;
+		}
+		.product-sub.is-visible { opacity: 1; transform: translateY(0); }
+
+		/* ── Countdown ── */
+		.product-countdown {
+			display: flex;
+			align-items: flex-start;
+			justify-content: center;
+			gap: clamp(16px, 3vw, 40px);
+			margin-bottom: 3.5rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.48s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.48s;
+		}
+		.product-countdown.is-visible { opacity: 1; transform: translateY(0); }
+		.countdown-unit {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 6px;
+		}
+		.countdown-unit__num {
+			font-family: var(--font-zentry);
+			font-size: clamp(2.5rem, 7vw, 6rem);
+			line-height: 1;
+			color: #fff;
+			letter-spacing: -0.02em;
+			min-width: 2ch;
+			text-align: center;
+			transition: transform 0.15s ease;
+		}
+		.countdown-unit__num.flip {
+			transform: translateY(-4px);
+		}
+		.countdown-unit__label {
+			font-family: var(--font-general);
+			font-size: 0.6rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.25);
+		}
+		.countdown-sep {
+			font-family: var(--font-zentry);
+			font-size: clamp(2rem, 5vw, 4.5rem);
+			color: rgba(199,251,80,0.3);
+			line-height: 1;
+			padding-top: 4px;
+		}
+
+		/* ── Subscribe form ── */
+		.product-subscribe {
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.58s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.58s;
+		}
+		.product-subscribe.is-visible { opacity: 1; transform: translateY(0); }
+
+		.subscribe-form {
+			display: flex;
+			align-items: stretch;
+			gap: 0;
+			max-width: 480px;
+			margin: 0 auto 1rem;
+			border: 1px solid rgba(255,255,255,0.1);
+			transition: border-color 0.2s ease;
+		}
+		.subscribe-form:focus-within {
+			border-color: rgba(199,251,80,0.4);
+		}
+		.subscribe-input {
+			flex: 1;
+			background: rgba(255,255,255,0.04);
+			border: none;
+			outline: none;
+			color: #fff;
+			font-family: var(--font-robert-regular);
+			font-size: 0.875rem;
+			padding: 14px 20px;
+		}
+		.subscribe-input::placeholder { color: rgba(255,255,255,0.2); }
+		.subscribe-btn {
+			background: #c7fb50;
+			border: none;
+			color: #000;
+			font-family: var(--font-general);
+			font-size: 0.65rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			padding: 14px 24px;
+			cursor: pointer;
+			white-space: nowrap;
+			transition: opacity 0.2s ease;
+			flex-shrink: 0;
+		}
+		.subscribe-btn:hover { opacity: 0.85; }
+		.subscribe-btn:disabled {
+			background: #00ffe0;
+			opacity: 1;
+			cursor: default;
+		}
+		.subscribe-note {
+			font-family: var(--font-general);
+			font-size: 0.6rem;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.2);
+			text-align: center;
+		}
+
+		/* ── Products preview cards ── */
+		.product-features {
+			border-top: 1px solid rgba(255,255,255,0.06);
+			padding: 80px 0 100px;
+		}
+		.product-features__inner {
+			max-width: 1060px;
+			margin: 0 auto;
+			padding: 0 32px;
+		}
+		.product-features__header {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 16px;
+			margin-bottom: 3rem;
+		}
+		.product-features__label {
+			font-family: var(--font-general);
+			font-size: 0.65rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.28);
+		}
+		.product-features__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(1.8rem, 4vw, 3.5rem);
+			text-transform: uppercase;
+			line-height: 0.95;
+			color: #fff;
+		}
+		.product-features__title span { color: #c7fb50; }
+		.product-features__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.8rem;
+			color: rgba(255,255,255,0.3);
+			max-width: 280px;
+			line-height: 1.7;
+		}
+
+		.product-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 1px;
+			background: rgba(255,255,255,0.06);
+		}
+		.product-card {
+			background: #000;
+			padding: 2rem;
+			position: relative;
+			overflow: hidden;
+			transition: background 0.3s ease;
+			cursor: default;
+		}
+		.product-card:hover { background: #0a0a0a; }
+
+		/* Hover accent line */
+		.product-card::before {
+			content: '';
+			position: absolute;
+			top: 0; left: 0; right: 0;
+			height: 1px;
+			background: #c7fb50;
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+		}
+		.product-card:hover::before { transform: scaleX(1); }
+
+		.product-card__status {
+			display: inline-block;
+			font-family: var(--font-general);
+			font-size: 0.58rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: #c7fb50;
+			border: 1px solid rgba(199,251,80,0.2);
+			padding: 4px 10px;
+			margin-bottom: 1.5rem;
+		}
+		.product-card__status--soon {
+			color: rgba(255,255,255,0.4);
+			border-color: rgba(255,255,255,0.1);
+		}
+		.product-card__num {
+			position: absolute;
+			top: 2rem; right: 2rem;
+			font-family: var(--font-zentry);
+			font-size: 3.5rem;
+			line-height: 1;
+			color: rgba(255,255,255,0.04);
+			letter-spacing: -0.02em;
+		}
+		.product-card__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(1.4rem, 2.5vw, 2rem);
+			text-transform: uppercase;
+			color: #fff;
+			margin-bottom: 0.75rem;
+			line-height: 1;
+		}
+		.product-card__text {
+			font-family: var(--font-robert-regular);
+			font-size: 0.8rem;
+			line-height: 1.7;
+			color: rgba(255,255,255,0.35);
+			margin-bottom: 1.5rem;
+		}
+		.product-card__tag {
+			font-family: var(--font-general);
+			font-size: 0.58rem;
+			letter-spacing: 0.2em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.2);
+		}
+		.product-card__tag span {
+			color: rgba(255,255,255,0.45);
+		}
+
+		/* ── CTA strip ── */
+		.product-cta {
+			border-top: 1px solid rgba(255,255,255,0.06);
+			padding: 80px 0;
+			text-align: center;
+		}
+		.product-cta__inner {
+			max-width: 1060px;
+			margin: 0 auto;
+			padding: 0 32px;
+		}
+		.product-cta__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(2.2rem, 6vw, 6rem);
+			text-transform: uppercase;
+			line-height: 0.92;
+			color: #fff;
+			margin-bottom: 1.5rem;
+		}
+		.product-cta__title b { color: #c7fb50; font-weight: inherit; }
+		.product-cta__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.85rem;
+			color: rgba(255,255,255,0.35);
+			margin-bottom: 2rem;
+		}
+
+	</style>
+</head>
+
+<body>
+<div class="wrapper product-page">
+
+	<!-- ── HEADER (identical to index) ── -->
+	<header data-fls-header="" class="header" data-fls-header-scroll="" data-fls-header-scroll-show="">
+		<div class="header__wrapper">
+			<div class="header__container">
+				<div class="header__menu menu">
+					<div class="menu__left-side">
+						<a href="index.html">
+								<div class="menu__logo">GAMELAND</div>
+							</a>
+						<a class="menu__btn btn --icon-cursor-r" href="product.html">
+							<span class="btn__label">
+								<span class="btn__main">PRODUCT</span>
+								<span class="btn__alt">SEE now!</span>
+							</span>
+						</a>
+					</div>
+					<div class="menu__body-wrapper">
+						<nav class="menu__body">
+							<ul class="menu__list">
+								
+								<li class="menu__item"><a href="about.html" class="menu__link">About</a></li>
+								<li class="menu__item"><a href="contacts.html" class="menu__link">Contacts</a></li>
+							</ul>
+						</nav>
+						<div class="menu__action">
+							<button type="button" class="menu__audio-toggle --icon-music" aria-label="Toggle audio"
+								aria-pressed="false" data-fls-dynamic=".menu__body, 385, 1">
+								<div class="menu__audio-icon">
+									<span></span><span></span><span></span><span></span>
+								</div>
+							</button>
+							<button type="button" data-fls-menu="" class="menu__icon icon-menu" aria-label="Toggle menu">
+								<span></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<!-- ══════════════════════════════════════
+		     HERO — Coming Soon
+		     ══════════════════════════════════════ -->
+		<section class="product-hero" aria-label="Product coming soon">
+
+			<div class="product-hero__bg">
+				<div class="product-hero__grid"></div>
+				<div class="product-hero__glow"></div>
+				<div class="product-hero__scan"></div>
+
+				<!-- reuse swordman + contact art as side decorations -->
+				<picture class="product-hero__bg-art product-hero__bg-art--left">
+					<source media="(max-width: 600px)"  srcset="./assets/img/contact-1-600.webp"  type="image/webp">
+					<source media="(max-width: 1200px)" srcset="./assets/img/contact-1-1200.webp" type="image/webp">
+					<img src="./assets/img/contact-1.webp" alt="" loading="lazy">
+				</picture>
+				<picture class="product-hero__bg-art product-hero__bg-art--right">
+					<source media="(max-width: 600px)"  srcset="./assets/img/swordman-600.webp"  type="image/webp">
+					<source media="(max-width: 1200px)" srcset="./assets/img/swordman-1200.webp" type="image/webp">
+					<img src="./assets/img/swordman.webp" alt="" loading="lazy">
+				</picture>
+			</div>
+
+			<div class="product-hero__inner">
+
+				<!-- Live badge -->
+				<div class="product-badge" id="pb-badge">
+					<div class="product-badge__dot"></div>
+					<span class="product-badge__text">Launching Soon </span>
+				</div>
+
+				<!-- Headline -->
+				<h1 class="product-headline" id="pb-title">
+					SOME<span>THING</span><br>BIG IS<br>COMING
+				</h1>
+
+				<!-- Sub -->
+				<p class="product-sub" id="pb-sub">
+					The next evolution of the Metagame Layer is almost here. A product built to redefine how you play, earn, and own your gaming identity.
+				</p>
+
+				<!-- Countdown -->
+				<div class="product-countdown" id="pb-countdown" role="timer" aria-label="Launch countdown">
+					<div class="countdown-unit">
+						<div class="countdown-unit__num" id="cd-days">00</div>
+						<div class="countdown-unit__label">Days</div>
+					</div>
+					<div class="countdown-sep" aria-hidden="true">:</div>
+					<div class="countdown-unit">
+						<div class="countdown-unit__num" id="cd-hours">00</div>
+						<div class="countdown-unit__label">Hours</div>
+					</div>
+					<div class="countdown-sep" aria-hidden="true">:</div>
+					<div class="countdown-unit">
+						<div class="countdown-unit__num" id="cd-mins">00</div>
+						<div class="countdown-unit__label">Minutes</div>
+					</div>
+					<div class="countdown-sep" aria-hidden="true">:</div>
+					<div class="countdown-unit">
+						<div class="countdown-unit__num" id="cd-secs">00</div>
+						<div class="countdown-unit__label">Seconds</div>
+					</div>
+				</div>
+
+				<!-- Subscribe -->
+				<div class="product-subscribe" id="pb-subscribe">
+					<form class="subscribe-form" id="subscribe-form" novalidate>
+						<input
+							class="subscribe-input"
+							id="sub-email"
+							type="email"
+							placeholder="Enter your email for early access"
+							required
+							autocomplete="email"
+						>
+						<button class="subscribe-btn" type="submit" id="sub-btn">
+							Notify Me
+						</button>
+					</form>
+					<p class="subscribe-note" id="sub-note">No spam. First access when we launch.</p>
+				</div>
+
+			</div>
+		</section>
+
+		<!-- ══════════════════════════════════════
+		     PRODUCT CARDS
+		     ══════════════════════════════════════ -->
+		<section class="product-features">
+			<div class="product-features__inner">
+
+				<div class="product-features__header">
+					<div>
+						<p class="product-features__label">What's Dropping</p>
+						<h2 class="product-features__title">The <span>Suite</span></h2>
+					</div>
+					<p class="product-features__sub">Four products. One metagame layer. All arriving together.</p>
+				</div>
+
+				<div class="product-grid">
+
+					<div class="product-card">
+						<span class="product-card__num">01</span>
+						<div class="product-card__status">In Development</div>
+						<h3 class="product-card__title">Radiant</h3>
+						<p class="product-card__text">Cross-platform metagame app turning every play session into rewards across Web2 and Web3 games.</p>
+						<div class="product-card__tag">Type: <span>Mobile + Desktop</span></div>
+					</div>
+
+					<div class="product-card">
+						<span class="product-card__num">02</span>
+						<div class="product-card__status">In Development</div>
+						<h3 class="product-card__title">Nexus</h3>
+						<p class="product-card__text">A gamified social hub adding a new dimension of interaction for Web3 gaming communities.</p>
+						<div class="product-card__tag">Type: <span>Social Platform</span></div>
+					</div>
+
+					<div class="product-card">
+						<span class="product-card__num">03</span>
+						<div class="product-card__status product-card__status--soon">Coming Later</div>
+						<h3 class="product-card__title">Zigma</h3>
+						<p class="product-card__text">An anime and gaming-inspired NFT collection  IP primed for expansion into the metaverse.</p>
+						<div class="product-card__tag">Type: <span>NFT Collection</span></div>
+					</div>
+
+					<div class="product-card">
+						<span class="product-card__num">04</span>
+						<div class="product-card__status product-card__status--soon">Coming Later</div>
+						<h3 class="product-card__title">Azul</h3>
+						<p class="product-card__text">A cross-world AI agent that elevates gameplay  smarter, more fun, more productive.</p>
+						<div class="product-card__tag">Type: <span>AI Agent</span></div>
+					</div>
+
+				</div>
+			</div>
+		</section>
+
+		<!-- ══════════════════════════════════════
+		     CTA (reuses same .cta class as index)
+		     ══════════════════════════════════════ -->
+		<section class="cta product-cta" id="contact" aria-labelledby="pcta-title">
+			<div class="product-cta__inner">
+				<h2 class="product-cta__title anim-title" id="pcta-title">
+					BE FIRST<br><b>IN LINE</b>
+				</h2>
+				<p class="product-cta__sub">Join thousands of players already on the waitlist.</p>
+				<a class="cta__button btn" href="contacts.html">
+					<span class="btn__label">
+						<span class="btn__main">contact us</span>
+						<span class="btn__alt">let's go!</span>
+					</span>
+				</a>
+			</div>
+		</section>
+
+	</main>
+
+	<audio id="bg-audio" src="./files/music.mp3" preload="auto" loop></audio>
+
+	<footer data-fls-footer="" class="footer">
+		<div class="footer__container">
+			<div class="footer__copy">© 2026 LANDGAME. All rights reserved.</div>
+			<ul class="footer__sociall">
+				<li class="footer__social-item">
+					<a href="https://dribbble.com/rafayalmani" class="footer__social-link --icon-dribbble">
+						<span class="visually-hidden">Dribbble</span>
+					</a>
+				</li>
+				<li class="footer__social-item">
+					<a href="https://github.com/Rafayalmani" class="footer__social-link --icon-github">
+						<span class="visually-hidden">GitHub</span>
+					</a>
+				</li>
+				<li class="footer__social-item">
+					<a href="https://discord.gg/Rafayalmani" class="footer__social-link --icon-discord">
+						<span class="visually-hidden">Discord</span>
+					</a>
+				</li>
+			</ul>
+			<div class="footer__credit">
+				Created &amp; Developed by
+				<a href="https://github.com/Rafayalmani" class="footer__credit-name">Rafay Almani</a>
+			</div>
+			
+		</div>
+	</footer>
+
+</div>
+
+<style>
+	/* Footer credit — matches snippet from previous step */
+	.footer__credit {
+		font-size: 11px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		color: rgba(255,255,255,0.25);
+	}
+	.footer__credit-name {
+		color: #c7fb50;
+		text-decoration: none;
+		border-bottom: 1px solid rgba(199,251,80,0.3);
+		padding-bottom: 1px;
+		margin-left: 6px;
+		transition: border-color 0.2s ease, color 0.2s ease;
+	}
+	.footer__credit-name:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+</style>
+
+<script>
+(function () {
+
+	/* ── Reveal on load ── */
+	window.addEventListener('load', function () {
+		setTimeout(function () {
+			['pb-badge','pb-title','pb-sub','pb-countdown','pb-subscribe'].forEach(function (id) {
+				var el = document.getElementById(id);
+				if (el) el.classList.add('is-visible');
+			});
+		}, 200);
+	});
+
+	/* ── Countdown timer ── Launch date: 90 days from now ── */
+	var launchDate = new Date();
+	launchDate.setDate(launchDate.getDate() + 90);
+	launchDate.setHours(0, 0, 0, 0);
+
+	function pad(n) { return String(n).padStart(2, '0'); }
+
+	function updateCountdown() {
+		var now  = Date.now();
+		var diff = launchDate.getTime() - now;
+
+		if (diff <= 0) {
+			document.getElementById('cd-days').textContent  = '00';
+			document.getElementById('cd-hours').textContent = '00';
+			document.getElementById('cd-mins').textContent  = '00';
+			document.getElementById('cd-secs').textContent  = '00';
+			return;
+		}
+
+		var days  = Math.floor(diff / 86400000);
+		var hours = Math.floor((diff % 86400000) / 3600000);
+		var mins  = Math.floor((diff % 3600000)  / 60000);
+		var secs  = Math.floor((diff % 60000)    / 1000);
+
+		var secsEl = document.getElementById('cd-secs');
+		var prev   = secsEl.textContent;
+		var next   = pad(secs);
+
+		document.getElementById('cd-days').textContent  = pad(days);
+		document.getElementById('cd-hours').textContent = pad(hours);
+		document.getElementById('cd-mins').textContent  = pad(mins);
+
+		if (prev !== next) {
+			secsEl.classList.add('flip');
+			secsEl.textContent = next;
+			setTimeout(function () { secsEl.classList.remove('flip'); }, 150);
+		}
+	}
+
+	updateCountdown();
+	setInterval(updateCountdown, 1000);
+
+	/* ── Subscribe form ── */
+	var form  = document.getElementById('subscribe-form');
+	var btn   = document.getElementById('sub-btn');
+	var note  = document.getElementById('sub-note');
+
+	if (form && btn) {
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			var email = document.getElementById('sub-email').value.trim();
+			if (!email || !email.includes('@')) return;
+
+			btn.textContent  = 'You\'re In ✓';
+			btn.disabled     = true;
+			btn.style.background = '#00ffe0';
+			note.textContent = 'Watch your inbox — we\'ll reach out before launch day.';
+			document.getElementById('sub-email').disabled = true;
+		});
+	}
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preload" href="./assets/fonts/zentry-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/robert-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="preload" href="./assets/fonts/general.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+	<link rel="shortcut icon" href="./assets/img/favicon.ico">
+	<title>Contacts</title>
+	<script type="module" crossorigin="" src="./js/index.min.js"></script>
+	<link rel="stylesheet" crossorigin="" href="./css/index.min.css">
+	<style>
+		/* ── Contacts page extra styles ── */
+		.contacts-hero {
+			min-height: 100svh;
+			display: flex;
+			align-items: center;
+			position: relative;
+			overflow: hidden;
+			padding-top: 120px;
+			padding-bottom: 80px;
+			background-color: #000;
+		}
+
+		/* Same decorative bg approach as the CTA section on index */
+		.contacts-hero__bg {
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			pointer-events: none;
+		}
+		.contacts-hero__bg-img-1,
+		.contacts-hero__bg-img-2,
+		.contacts-hero__bg-img-3 {
+			position: absolute;
+			pointer-events: none;
+			user-select: none;
+		}
+		.contacts-hero__bg-img-1 {
+			left: -80px;
+			bottom: -40px;
+			width: clamp(240px, 35vw, 480px);
+			opacity: 0.18;
+		}
+		.contacts-hero__bg-img-2 {
+			right: 0;
+			top: 0;
+			width: clamp(200px, 28vw, 380px);
+			opacity: 0.12;
+		}
+		.contacts-hero__bg-img-3 {
+			right: -60px;
+			bottom: -80px;
+			width: clamp(280px, 40vw, 560px);
+			opacity: 0.22;
+		}
+
+		.contacts-hero__container {
+			position: relative;
+			z-index: 2;
+			width: 100%;
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 60px;
+		}
+		@media (min-width: 900px) {
+			.contacts-hero__container { grid-template-columns: 1fr 1fr; align-items: start; }
+		}
+
+		/* Left: heading + info */
+		.contacts-left__label {
+			font-family: var(--font-general);
+			font-size: 0.7rem;
+			letter-spacing: 0.3em;
+			text-transform: uppercase;
+			color: #c7fb50;
+			margin-bottom: 1.5rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s;
+		}
+		.contacts-left__label.is-visible { opacity: 1; transform: translateY(0); }
+
+		.contacts-left__title {
+			font-family: var(--font-zentry);
+			font-size: clamp(3rem, 9vw, 8rem);
+			line-height: 0.9;
+			text-transform: uppercase;
+			color: #fff;
+			margin-bottom: 2rem;
+			opacity: 0;
+			transform: translateY(40px);
+			transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s,
+						transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.2s;
+		}
+		.contacts-left__title.is-visible { opacity: 1; transform: translateY(0); }
+		.contacts-left__title b { color: #c7fb50; font-weight: inherit; }
+
+		.contacts-left__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.85rem;
+			line-height: 1.75;
+			color: rgba(255,255,255,0.4);
+			max-width: 420px;
+			margin-bottom: 3rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.35s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.35s;
+		}
+		.contacts-left__sub.is-visible { opacity: 1; transform: translateY(0); }
+
+		/* Info items */
+		.contacts-info {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s;
+		}
+		.contacts-info.is-visible { opacity: 1; transform: translateY(0); }
+		.contacts-info__item {
+			display: flex;
+			align-items: flex-start;
+			gap: 16px;
+			border-top: 1px solid rgba(255,255,255,0.07);
+			padding-top: 20px;
+		}
+		.contacts-info__icon {
+			width: 32px; height: 32px;
+			border: 1px solid rgba(255,255,255,0.12);
+			display: flex; align-items: center; justify-content: center;
+			flex-shrink: 0;
+		}
+		.contacts-info__icon svg { width: 14px; height: 14px; }
+		.contacts-info__meta {
+			font-family: var(--font-general);
+			font-size: 0.62rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.3);
+			margin-bottom: 4px;
+		}
+		.contacts-info__value {
+			font-family: var(--font-robert-regular);
+			font-size: 0.88rem;
+			color: rgba(255,255,255,0.75);
+		}
+		.contacts-info__value a {
+			color: inherit;
+			text-decoration: none;
+			transition: color 0.2s ease;
+		}
+		.contacts-info__value a:hover { color: #c7fb50; }
+
+		/* Social links */
+		.contacts-socials {
+			display: flex;
+			gap: 12px;
+			margin-top: 2.5rem;
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s,
+						transform 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s;
+		}
+		.contacts-socials.is-visible { opacity: 1; transform: translateY(0); }
+		.contacts-social {
+			font-family: var(--font-general);
+			font-size: 0.62rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.35);
+			border: 1px solid rgba(255,255,255,0.1);
+			padding: 8px 14px;
+			text-decoration: none;
+			transition: color 0.2s ease, border-color 0.2s ease;
+		}
+		.contacts-social:hover { color: #c7fb50; border-color: rgba(199,251,80,0.3); }
+
+		/* Right: form */
+		.contacts-form-wrap {
+			opacity: 0;
+			transform: translateY(30px);
+			transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s,
+						transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s;
+		}
+		.contacts-form-wrap.is-visible { opacity: 1; transform: translateY(0); }
+
+		.contacts-form {
+			border: 1px solid rgba(255,255,255,0.07);
+			padding: 2.5rem;
+			background: rgba(255,255,255,0.02);
+		}
+		.contacts-form__title {
+			font-family: var(--font-zentry);
+			font-size: 1.6rem;
+			text-transform: uppercase;
+			color: #fff;
+			margin-bottom: 0.5rem;
+		}
+		.contacts-form__sub {
+			font-family: var(--font-robert-regular);
+			font-size: 0.78rem;
+			color: rgba(255,255,255,0.3);
+			margin-bottom: 2rem;
+		}
+
+		.form-group {
+			margin-bottom: 1.25rem;
+		}
+		.form-label {
+			display: block;
+			font-family: var(--font-general);
+			font-size: 0.62rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			color: rgba(255,255,255,0.3);
+			margin-bottom: 8px;
+		}
+		.form-input,
+		.form-textarea,
+		.form-select {
+			width: 100%;
+			background: rgba(255,255,255,0.04);
+			border: 1px solid rgba(255,255,255,0.1);
+			color: #fff;
+			font-family: var(--font-robert-regular);
+			font-size: 0.875rem;
+			padding: 12px 16px;
+			outline: none;
+			transition: border-color 0.2s ease, background 0.2s ease;
+			appearance: none;
+			-webkit-appearance: none;
+		}
+		.form-input:focus,
+		.form-textarea:focus,
+		.form-select:focus {
+			border-color: rgba(199,251,80,0.4);
+			background: rgba(255,255,255,0.06);
+		}
+		.form-input::placeholder,
+		.form-textarea::placeholder { color: rgba(255,255,255,0.2); }
+		.form-textarea { resize: vertical; min-height: 120px; }
+		.form-select { cursor: pointer; }
+		.form-select option { background: #0a0a0a; }
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1rem;
+		}
+
+		.form-submit {
+			width: 100%;
+			margin-top: 0.5rem;
+			font-family: var(--font-general);
+			font-size: 0.72rem;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			background: #c7fb50;
+			color: #000;
+			border: none;
+			padding: 16px;
+			cursor: pointer;
+			transition: opacity 0.2s ease, transform 0.2s ease;
+		}
+		.form-submit:hover { opacity: 0.85; transform: translateY(-1px); }
+		.form-submit:disabled { opacity: 0.6; cursor: default; transform: none; }
+		.form-submit--sent {
+			background: #00ffe0 !important;
+		}
+
+		.footer__credit {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.footer__credit-name {
+  color: #c7fb50;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(199, 251, 80, 0.3);
+  padding-bottom: 1px;
+  margin-left: 6px;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.footer__credit-name:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+	</style>
+</head>
+
+<body>
+<div class="wrapper">
+
+	<header data-fls-header="" class="header" data-fls-header-scroll="" data-fls-header-scroll-show="">
+		<div class="header__wrapper">
+			<div class="header__container">
+				<div class="header__menu menu">
+					<div class="menu__left-side">
+						<a href="index.html">
+								<div class="menu__logo">GAMELAND</div>
+							</a>
+						<a class="menu__btn btn --icon-cursor-r" href="#">
+							<span class="btn__label">
+								<span class="btn__main">PRODUCT</span>
+								<span class="btn__alt">SEE now!</span>
+							</span>
+						</a>
+					</div>
+					<div class="menu__body-wrapper">
+						<nav class="menu__body">
+							<ul class="menu__list">
+								
+							
+								<li class="menu__item"><a href="about.html" class="menu__link">About</a></li>
+								<li class="menu__item"><a href="contacts.html" class="menu__link --active">Contacts</a></li>
+							</ul>
+						</nav>
+						<div class="menu__action">
+							<button type="button" class="menu__audio-toggle --icon-music" aria-label="Toggle audio"
+								aria-pressed="false" data-fls-dynamic=".menu__body, 385, 1">
+								<div class="menu__audio-icon">
+									<span></span><span></span><span></span><span></span>
+								</div>
+							</button>
+							<button type="button" data-fls-menu="" class="menu__icon icon-menu" aria-label="Toggle menu">
+								<span></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main class="page">
+
+		<!-- ── CONTACTS HERO ───────────────────────── -->
+		<section class="contacts-hero" aria-label="Contact us">
+
+			<!-- Decorative bg images same as index CTA section -->
+			<div class="contacts-hero__bg" aria-hidden="true">
+				<picture class="contacts-hero__bg-img-1">
+					<source media="(max-width: 600px)"  srcset="./assets/img/contact-1-600.webp" type="image/webp">
+					<source media="(max-width: 1200px)" srcset="./assets/img/contact-1-1200.webp" type="image/webp">
+					<img src="./assets/img/contact-1.webp" alt="" loading="lazy">
+				</picture>
+				<picture class="contacts-hero__bg-img-2">
+					<source media="(max-width: 600px)"  srcset="./assets/img/contact-2-600.webp" type="image/webp">
+					<source media="(max-width: 1200px)" srcset="./assets/img/contact-2-1200.webp" type="image/webp">
+					<img src="./assets/img/contact-2.webp" alt="" loading="lazy">
+				</picture>
+				<picture class="contacts-hero__bg-img-3">
+					<source media="(max-width: 600px)"  srcset="./assets/img/swordman-600.webp" type="image/webp">
+					<source media="(max-width: 1200px)" srcset="./assets/img/swordman-1200.webp" type="image/webp">
+					<img src="./assets/img/swordman.webp" alt="" loading="lazy">
+				</picture>
+			</div>
+
+			<div class="contacts-hero__container wrapper__container">
+
+				<!-- LEFT -->
+				<div class="contacts-left">
+					<p class="contacts-left__label" id="ct-label">Get In Touch</p>
+					<h1 class="contacts-left__title" id="ct-title">
+						LET'S<br><b>TALK</b>
+					</h1>
+					<p class="contacts-left__sub" id="ct-sub">
+						Whether you're a studio, a community, or a player ready to build the next era of gaming  we want to hear from you.
+					</p>
+
+					<div class="contacts-info" id="ct-info">
+						<div class="contacts-info__item">
+							<div class="contacts-info__icon">
+								<svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M1 3L7 8L13 3" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-linecap="round"/>
+									<rect x="1" y="3" width="12" height="9" rx="1" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none"/>
+								</svg>
+							</div>
+							<div>
+								<div class="contacts-info__meta">Email</div>
+								<div class="contacts-info__value">
+									<a href="mailto:almanicompanylimited@gmail.com">almanicompanylimited@gmail.com</a>
+								</div>
+							</div>
+						</div>
+						<div class="contacts-info__item">
+							<div class="contacts-info__icon">
+								<svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<circle cx="7" cy="6" r="2.5" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none"/>
+									<path d="M7 1C4.24 1 2 3.24 2 6C2 9.5 7 13 7 13C7 13 12 9.5 12 6C12 3.24 9.76 1 7 1Z" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none"/>
+								</svg>
+							</div>
+							<div>
+								<div class="contacts-info__meta">HQ</div>
+								<div class="contacts-info__value">Multan, Pakistan</div>
+							</div>
+						</div>
+						<div class="contacts-info__item">
+							<div class="contacts-info__icon">
+								<svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<circle cx="7" cy="7" r="5.5" stroke="rgba(255,255,255,0.5)" stroke-width="1" fill="none"/>
+									<line x1="7" y1="4" x2="7" y2="7.5" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-linecap="round"/>
+									<line x1="7" y1="7.5" x2="9.5" y2="9" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-linecap="round"/>
+								</svg>
+							</div>
+							<div>
+								<div class="contacts-info__meta">Response Time</div>
+								<div class="contacts-info__value">Within 24 hours</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="contacts-socials" id="ct-socials">
+						
+						<a href="https://github.com/Rafayalmani"   class="contacts-social">GitHub</a>
+						<a href="https://discord.gg/Rafayalmani"   class="contacts-social">Discord</a>
+					</div>
+				</div>
+
+				<!-- RIGHT: form -->
+				<div class="contacts-form-wrap" id="ct-form-wrap">
+					<div class="contacts-form">
+						<h2 class="contacts-form__title">Send a Message</h2>
+						<p class="contacts-form__sub">Tell us about your project, partnership, or idea.</p>
+
+						<form id="contact-form" novalidate>
+							<div class="form-row">
+								<div class="form-group">
+									<label class="form-label" for="cf-name">Name</label>
+									<input class="form-input" id="cf-name" type="text" placeholder="Your name" required>
+								</div>
+								<div class="form-group">
+									<label class="form-label" for="cf-email">Email</label>
+									<input class="form-input" id="cf-email" type="email" placeholder="your@email.com" required>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="form-label" for="cf-subject">Subject</label>
+								<select class="form-select" id="cf-subject">
+									<option value="" disabled selected>Select a topic</option>
+									<option value="partnership">Partnership / Studio</option>
+									<option value="community">Community / Players</option>
+									<option value="press">Press / Media</option>
+									<option value="careers">Careers</option>
+									<option value="other">Other</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="form-label" for="cf-message">Message</label>
+								<textarea class="form-textarea" id="cf-message" placeholder="Tell us what you're building…" required></textarea>
+							</div>
+							<button type="submit" class="form-submit" id="form-submit">
+								Send Message →
+							</button>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</section>
+
+	</main>
+
+	<audio id="bg-audio" src="./files/music.mp3" preload="auto" loop></audio>
+
+	<footer data-fls-footer="" class="footer">
+  <div class="footer__container">
+
+    <div class="footer__copy">© 2026 LANDGAME. All rights reserved.</div>
+
+    <ul class="footer__sociall">
+      <li class="footer__social-item">
+        <a href="https://dribbble.com/rafayalmani" class="footer__social-link --icon-dribbble">
+          <span class="visually-hidden">Dribbble</span>
+        </a>
+      </li>
+      <li class="footer__social-item">
+        <a href="https://github.com/Rafayalmani" class="footer__social-link --icon-github">
+          <span class="visually-hidden">GitHub</span>
+        </a>
+      </li>
+      <li class="footer__social-item">
+        <a href="https://discord.gg/Rafayalmani" class="footer__social-link --icon-discord">
+          <span class="visually-hidden">Discord</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="footer__credit">
+      Created &amp; Developed by
+      <a href="https://github.com/Rafayalmani" class="footer__credit-name">Rafay Almani</a>
+    </div>
+
+    
+
+  </div>
+</footer>
+
+</div>
+
+<script>
+	// Reveal hero elements
+	window.addEventListener('load', function () {
+		setTimeout(function () {
+			['ct-label','ct-title','ct-sub','ct-info','ct-socials','ct-form-wrap'].forEach(function (id) {
+				var el = document.getElementById(id);
+				if (el) el.classList.add('is-visible');
+			});
+		}, 200);
+	});
+
+	// Form submit
+	var form = document.getElementById('contact-form');
+	var btn  = document.getElementById('form-submit');
+	if (form && btn) {
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			btn.textContent = 'MESSAGE SENT ✓';
+			btn.classList.add('form-submit--sent');
+			btn.disabled = true;
+		});
+	}
+</script>
+</body>
+</html>
